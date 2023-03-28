@@ -19,3 +19,17 @@ f0, voiced_flag, voiced_probabilities = librosa.pyin(audio,
 
 Overlap-and-add (OLA) techniques allow us to change the time duration of a signal without changing its pitch (i.e., perform a time-scale modification, TSM) by dividing the signal into a series of overlapping frames and then reassembling those frames but with a different distance between the frames.
 Resampling allows us to change the duration and the pitch of the signal together (see my tutorial on the variable speed replay effect which uses this approach). A combination of an OLA-technique with resampling allows us to change the pitch of a signal without changing its duration. OLA is used to counteract the inherent time-scale modification outcome of the resampling part.
+
+```python
+pitch_shifted_signal = psola.vocode(audio,
+                                    sample_rate=int(sr),
+                                    target_pitch=corrected_f0,
+                                    fmin=fmin,
+                                    fmax=fmax)
+```
+
+In this line of code, audio is the vocals recording, sample_rate is self-explanatory, target_pitch contains the values of the corrected pitch, and fmin and fmax are the minimum and the maximum target frequencies we’ll pitch-shift to. The passed-in vector of the desired fundamental frequency values can be of any length; the psola library will simply space these values evenly throughout the signal duration. For example, if we pass in a signal with 4000 samples and target_pitch equal to [440, 880], the first 2000 samples will be pitch-shifted to 440 Hz and the remaining 2000 samples to 880 Hz.
+
+## Find Correct Pitch
+
+We could round to the nearest MIDI note, round to the nearest note of the song’s scale, i.e., round to a note from the C major scale if the song is in C major, or use the sheet music to match the vocals to the original score. We could mix and match the above techniques with other tweaks like introducing the dry/wet parameter.
